@@ -7,5 +7,5 @@ public class User {
     private long id;
     private String mail;
     private String name;
-    private String password;
+    private String hashedPw;
 }

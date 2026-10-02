@@ -12,6 +12,7 @@ create table if not exists diary (
     created_at timestamptz default current_timestamp not null,
     updated_at timestamptz default null,
     diary_date date not null,
+    is_completed boolean default false not null,
     foreign key (user_id) references users(id),
     unique (user_id, diary_date)
 );
@@ -20,13 +21,16 @@ create table if not exists memo (
     id serial primary key,
     user_id integer not null,
     content text not null,
-    created_at timestamptz not null,
-    foreign key (user_id) references users(id)
+    created_at timestamptz default current_timestamp not null,
+    updated_at timestamptz default null,
+    week_start_date date not null,
+    foreign key (user_id) references users(id),
+    unique (user_id, week_start_date)
 );
 
 create table if not exists password_recovery (
     id serial primary key,
-    user_id integer not null,
+    user_id integer not null unique,
     token_hash varchar(64) not null unique,
     expires_at timestamptz not null,
     used_at timestamptz default null,

@@ -2,7 +2,7 @@ create table if not exists users (
     id serial primary key,
     mail varchar(255) not null unique,
     name varchar(255) not null,
-    hashed_pw varchar(255) not null
+    hashed_pw varchar(60) not null
 );
 
 create table if not exists diary (

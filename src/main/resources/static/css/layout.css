@@ -1,0 +1,42 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    color: #243c57;
+    background-color: #f8fafc;
+    font-family: "Yu Gothic", Meiryo, sans-serif;
+    line-height: 1.6;
+}
+
+.site-header {
+    padding: 24px 0;
+    color: #ffffff;
+    background-color: #243c57;
+}
+
+.site-header__inner,
+.site-footer__inner {
+    width: calc(100% - 32px);
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.site-brand {
+    margin: 0;
+    font-family: "Yu Mincho", "MS PMincho", serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.site-footer {
+    margin-top: auto;
+    padding: 20px 0;
+    border-top: 1px solid #d7e0e9;
+    color: #627085;
+    background-color: #ffffff;
+}
+
+.site-footer small {
+    font-size: 0.875rem;
+}

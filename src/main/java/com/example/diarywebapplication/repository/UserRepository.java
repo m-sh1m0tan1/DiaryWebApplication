@@ -17,8 +17,13 @@ public class UserRepository {
         return userMapper.getUserById(id);
     }
 
-    public void insertUser(User user) {
-        userMapper.insertUser(user);
+    public User getUserByMail(String mail) {
+        return userMapper.getUserByMail(mail);
+    }
+
+
+    public int insertUser(User user) {
+         return userMapper.insertUser(user);
     }
 
     @Transactional

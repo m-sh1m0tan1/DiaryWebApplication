@@ -24,6 +24,6 @@ public interface DiaryMapper {
     @Insert("insert into diary (user_id, title, current_mood, content, good_things, tomorrow_note, diary_date) values (#{userId}, #{title}, cast(#{currentMood, jdbcType=VARCHAR} as mood), #{content}, #{goodThings}, #{tomorrowNote}, #{diaryDate}) on conflict (user_id, diary_date) do nothing")
     int insertDiary(Diary diary);
 
-    @Update("update diary set title = #{title}, current_mood = #{currentMood}, content = #{content}, good_things = #{goodThings}, tomorrow_note = #{tomorrowNote}, updated_at = current_timestamp where id = #{id}")
+    @Update("update diary set title = #{title}, current_mood = cast(#{currentMood, jdbcType=VARCHAR} as mood), content = #{content}, good_things = #{goodThings}, tomorrow_note = #{tomorrowNote}, updated_at = current_timestamp where id = #{id} and user_id = #{userId}")
     int updateDiary(Diary diary);
 }

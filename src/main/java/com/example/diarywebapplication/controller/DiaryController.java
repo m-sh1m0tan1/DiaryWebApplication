@@ -2,7 +2,9 @@ package com.example.diarywebapplication.controller;
 
 import com.example.diarywebapplication.Form.DiaryForm;
 import com.example.diarywebapplication.entity.Diary;
+import com.example.diarywebapplication.exception.DiaryNotFoundException;
 import com.example.diarywebapplication.exception.InvalidDiaryDateException;
+import com.example.diarywebapplication.exception.InvalidDiaryFormException;
 import com.example.diarywebapplication.security.CustomUserDetails;
 import com.example.diarywebapplication.service.DiaryService;
 
@@ -95,5 +97,39 @@ public class DiaryController {
         Diary diary = diaryService.getDiaryByDiaryId(diaryId, userDetails.getUserId());
         model.addAttribute("diary", diary);
         return "diary/detail";
+    }
+
+    @GetMapping("/update/{diaryId}")
+    public String getDiaryUpdatePage(@PathVariable long diaryId,
+                                     Model model,
+                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Diary diary = diaryService.getDiaryByDiaryId(diaryId, userDetails.getUserId());
+        DiaryForm diaryForm = new DiaryForm();
+        diaryForm.setTitle(diary.getTitle());
+        diaryForm.setDiaryDate(diary.getDiaryDate());
+        diaryForm.setCurrentMood(diary.getCurrentMood());
+        diaryForm.setContent(diary.getContent());
+        diaryForm.setGoodThings(diary.getGoodThings());
+        diaryForm.setTomorrowNote(diary.getTomorrowNote());
+        model.addAttribute("diary", diary);
+        model.addAttribute("diaryForm", diaryForm);
+        return "diary/update";
+    }
+
+    @PostMapping("/update/{diaryId}")
+    public String postDiaryUpdate(@PathVariable long diaryId,
+                                  @AuthenticationPrincipal CustomUserDetails userDetails,
+                                  DiaryForm diaryForm,
+                                  RedirectAttributes redirectAttributes
+                                  ) {
+        if (diaryForm.getContent() == null || diaryForm.getContent().isBlank()) {
+            throw new InvalidDiaryFormException("日記の内容が指定されていません");
+        }
+        if (diaryForm.getCurrentMood() == null) {
+            throw new InvalidDiaryFormException("現在の気分が指定されていません");
+        }
+        diaryService.updateDiary(diaryForm, userDetails.getUserId(), diaryId);
+        redirectAttributes.addFlashAttribute("successMessage", "日記を更新しました。(" + diaryForm.getDiaryDate() + ")");
+        return "redirect:/diary/detail/" + diaryId;
     }
 }

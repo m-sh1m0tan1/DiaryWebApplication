@@ -6,9 +6,12 @@
 <body class="diary-detail">
     <div th:replace="~{layout :: header}"></div>
     <main class="diary-detail-main" aria-labelledby="diary-title">
+        <p class="success-message" th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
         <nav class="diary-detail__navigation" aria-label="日記詳細ページのナビゲーション">
             <a class="diary-back-button"
                th:href="@{/diary(diaryDate=${diary.diaryDate})}" href="/diary">ホームへ戻る</a>
+            <a class="diary-back-button"
+               th:href="@{/diary/update/{diaryId}(diaryId=${diary.id})}">編集する</a>
         </nav>
 
         <article class="diary-entry">

@@ -80,6 +80,27 @@ public class DiaryService {
         }
         return diary;
     }
+
+    public Diary updateDiary(DiaryForm diaryForm, long userId, long diaryId) {
+        Diary diary = getDiaryByDiaryId(diaryId, userId);
+        if (diary == null) {
+            throw new DiaryNotFoundException("指定された日記が見つかりません");
+        }
+
+        diary.setUserId(userId);
+        diary.setTitle(diaryForm.getTitle() == null || diaryForm.getTitle().isBlank() ? null : diaryForm.getTitle());
+        diary.setCurrentMood(diaryForm.getCurrentMood() == null ? null : diaryForm.getCurrentMood());
+        diary.setContent(diaryForm.getContent() == null || diaryForm.getContent().isBlank() ? null : diaryForm.getContent());
+        diary.setGoodThings(diaryForm.getGoodThings() == null || diaryForm.getGoodThings().isBlank() ? null : diaryForm.getGoodThings());
+        diary.setTomorrowNote(diaryForm.getTomorrowNote() == null || diaryForm.getTomorrowNote().isBlank() ? null : diaryForm.getTomorrowNote());
+        diary.setId(diaryId);
+//        return diaryRepository.updateDiary(diary);
+        Diary updatedDiary = diaryRepository.updateDiary(diary);
+        if (updatedDiary == null) {
+            throw new DiaryNotFoundException("指定された日記が見つかりません");
+        }
+        return updatedDiary;
+    }
 }
 
 

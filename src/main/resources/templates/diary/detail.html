@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout :: head('日記の詳細')}"></head>
+
+<body class="diary-detail">
+    <div th:replace="~{layout :: header}"></div>
+    <main class="diary-detail-main" aria-labelledby="diary-title">
+        <nav class="diary-detail__navigation" aria-label="日記詳細ページのナビゲーション">
+            <a class="diary-back-button"
+               th:href="@{/diary(diaryDate=${diary.diaryDate})}" href="/diary">ホームへ戻る</a>
+        </nav>
+
+        <article class="diary-entry">
+            <header class="diary-entry__header">
+                <p class="diary-entry__eyebrow">一日の記録</p>
+                <time class="diary-entry__date" th:datetime="${diary.diaryDate}"
+                      th:text="${#temporals.format(diary.diaryDate, 'yyyy年M月d日')}">2026年1月1日</time>
+                <h1 id="diary-title"
+                    th:text="${diary.title == null or diary.title.isBlank() ? '日記' : diary.title}">日記</h1>
+                <div class="diary-entry__mood" th:if="${diary.currentMood != null}">
+                    <span class="diary-entry__mood-label">気分</span>
+                    <span class="diary-entry__mood-value" th:switch="${diary.currentMood.name()}">
+                        <span th:case="'GOOD'">良い</span>
+                        <span th:case="'NORMAL'">普通</span>
+                        <span th:case="'BAD'">悪い</span>
+                    </span>
+                </div>
+            </header>
+
+            <section class="diary-entry__section" aria-labelledby="diary-content-heading">
+                <h2 id="diary-content-heading">日記</h2>
+                <p class="diary-entry__text" th:text="${diary.content}">日記の本文がここに表示されます。</p>
+            </section>
+
+            <section class="diary-entry__reflection"
+                     th:if="${(diary.goodThings != null and !diary.goodThings.isBlank()) or (diary.tomorrowNote != null and !diary.tomorrowNote.isBlank())}"
+                     aria-labelledby="diary-reflection-heading">
+                <h2 id="diary-reflection-heading">明日につなげるメモ</h2>
+                <div class="diary-entry__reflection-grid">
+                    <section class="diary-entry__section diary-entry__section--reflection"
+                             th:if="${diary.goodThings != null and !diary.goodThings.isBlank()}"
+                             aria-labelledby="good-things-heading">
+                        <h3 id="good-things-heading">良かったこと</h3>
+                        <p class="diary-entry__text" th:text="${diary.goodThings}">良かったことがここに表示されます。</p>
+                    </section>
+                    <section class="diary-entry__section diary-entry__section--reflection"
+                             th:if="${diary.tomorrowNote != null and !diary.tomorrowNote.isBlank()}"
+                             aria-labelledby="tomorrow-note-heading">
+                        <h3 id="tomorrow-note-heading">明日へのメモ</h3>
+                        <p class="diary-entry__text" th:text="${diary.tomorrowNote}">明日へのメモがここに表示されます。</p>
+                    </section>
+                </div>
+            </section>
+        </article>
+    </main>
+    <div th:replace="~{layout :: footer}"></div>
+</body>
+
+</html>

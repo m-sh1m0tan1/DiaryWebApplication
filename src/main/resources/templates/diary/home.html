@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout :: head('ホーム')}"></head>
+
+<body class="diary-home">
+    <div th:replace="~{layout :: header}"></div>
+    <main class="diary-main">
+        <p class="error-message" th:if="${error}" th:text="${error}" role="alert"></p>
+        <p class="success-message" th:if="${successMessage}" th:text="${successMessage}" role="status"></p>
+        <div class="diary-overview">
+            <div class="diary-overview__heading">
+                <p class="diary-overview__eyebrow">一週間のノート</p>
+                <h1 class="diary-overview__range">
+                    <time th:datetime="${startDate}"
+                          th:text="${#temporals.format(startDate, 'yyyy年M月d日')}"></time>
+                    <span aria-hidden="true">—</span><span class="visually-hidden">から</span>
+                    <time th:datetime="${endDate}"
+                          th:text="${#temporals.format(endDate, 'yyyy年M月d日')}"></time>
+                </h1>
+            </div>
+            <a class="diary-new-link" th:href="@{/diary/new}" href="/diary/new">日記を書く</a>
+        </div>
+        <nav class="week-navigation" aria-label="表示する週">
+            <div class="week-navigation__previous">
+                <a class="week-navigation__link"
+                   th:href="@{/diary(diaryDate=${startDate.minusMonths(1)})}">先月へ</a>
+                <a class="week-navigation__link"
+                   th:href="@{/diary(diaryDate=${startDate.minusWeeks(1)})}">先週へ</a>
+            </div>
+            <div class="week-navigation__next">
+                <a class="week-navigation__link"
+                   th:href="@{/diary(diaryDate=${startDate.plusWeeks(1)})}">来週へ</a>
+                <a class="week-navigation__link"
+                   th:href="@{/diary(diaryDate=${startDate.plusMonths(1)})}">来月へ</a>
+            </div>
+        </nav>
+
+        <section class="notebook" aria-label="一週間の日記">
+            <section class="notebook__page" th:each="page : ${#numbers.sequence(0, 1)}"
+                     th:classappend="${page == 0 ? 'notebook-page-left' : 'notebook-page-right'}"
+                     th:attr="aria-label=${page == 0 ? '左ページ：日曜日から水曜日' : '右ページ：木曜日から土曜日'}">
+                <article class="sticky-note" th:each="day : ${page == 0 ? #numbers.sequence(0, 3) : #numbers.sequence(4, 6)}"
+                         th:with="noteDate=${startDate.plusDays(day)},
+                                  diary=${diaries == null ? null : diaries.^[diaryDate == #vars.noteDate]}"
+                         th:classappend="${'sticky-note--' + day + (noteDate.equals(#temporals.createToday()) ? ' sticky-note--today' : '')}">
+                    <div class="sticky-note__date">
+                        <time th:datetime="${noteDate}" th:text="${#temporals.format(noteDate, 'M月d日')}"></time>
+                        <span class="sticky-note__weekday"
+                              th:text="${({'日', '月', '火', '水', '木', '金', '土'})[day] + '曜日'}"></span>
+                        <span class="sticky-note__today" th:if="${noteDate.equals(#temporals.createToday())}">今日</span>
+                    </div>
+
+                    <th:block th:if="${diary != null}">
+                        <div class="sticky-note__entry">
+                            <h2 class="sticky-note__title drop-cap" th:if="${diary.titlePresent}"
+                                th:text="${diary.displayTitle}"></h2>
+                            <p class="sticky-note__content" th:classappend="${!diary.titlePresent ? 'drop-cap' : ''}"
+                               th:text="${diary.displayContent}"></p>
+                        </div>
+                        <a class="sticky-note__detail-link"
+                           th:href="@{/diary/detail/{diaryId}(diaryId=${diary.id})}"
+                           th:attr="aria-label=${#temporals.format(noteDate, 'M月d日') + 'の日記を全文で読む'}">全文を読む</a>
+                        <div class="sticky-note__tomorrow">
+                            <h3>明日へのノート</h3>
+                            <p th:text="${diary.displayTomorrowNote}"></p>
+                        </div>
+                    </th:block>
+
+                    <div class="sticky-note__blank"
+                         th:if="${diary == null and !noteDate.isAfter(#temporals.createToday())}">
+                        <span class="sticky-note__blank-mark" aria-hidden="true">＋</span>
+                        <a th:href="@{/diary/new(diaryDate=${noteDate})}"
+                           th:attr="aria-label=${#temporals.format(noteDate, 'M月d日') + 'の日記を書く'}">日記を書く</a>
+                    </div>
+                    <div class="sticky-note__blank"
+                         th:if="${diary == null and noteDate.isAfter(#temporals.createToday())}">
+                        <span>この日の日記はまだ書けません</span>
+                    </div>
+                </article>
+            </section>
+        </section>
+    </main>
+    <div th:replace="~{layout :: footer}"></div>
+</body>
+
+</html>

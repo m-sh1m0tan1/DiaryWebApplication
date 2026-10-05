@@ -1,3 +1,5 @@
+create type mood as enum('GOOD', 'NORMAL', 'BAD');
+
 create table if not exists users (
     id serial primary key,
     mail varchar(255) not null unique,
@@ -8,11 +10,14 @@ create table if not exists users (
 create table if not exists diary (
     id serial primary key,
     user_id integer not null,
+    title varchar(255),
+    current_mood mood not null,
     content text not null,
+    good_things text,
+    tomorrow_note text,
     created_at timestamptz default current_timestamp not null,
     updated_at timestamptz default null,
     diary_date date not null,
-    is_completed boolean default false not null,
     foreign key (user_id) references users(id),
     unique (user_id, diary_date)
 );

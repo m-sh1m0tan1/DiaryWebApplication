@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout :: head('日記を書く')}"></head>
+
+<body class="diary-create">
+    <div th:replace="~{layout :: header}"></div>
+    <main class="diary-create-main">
+        <header class="diary-create-heading">
+            <div class="diary-create-heading__top">
+                <div>
+                    <p class="diary-create-heading__eyebrow">一日の記録</p>
+                    <h1 id="diary-create-title">日記を書く</h1>
+                </div>
+                <a class="diary-back-button" th:href="@{/diary}">一覧に戻る</a>
+            </div>
+            <p>その日の出来事や気持ちを、自分のペースで残しましょう。</p>
+        </header>
+        <p class="error-message" th:if="${error}" th:text="${error}" role="alert"></p>
+        <form class="diary-form" th:action="@{/diary/new}" method="post" th:object="${diaryForm}"
+              aria-labelledby="diary-create-title">
+            <input type="hidden" name="dateEditable" th:value="${dateEditable == true}">
+            <div class="error-message" th:if="${#fields.hasErrors('*')}"
+                 th:errors="*{all}" role="alert"></div>
+
+            <section class="diary-form__section" aria-labelledby="diary-form-context-heading">
+                <div class="diary-form__section-heading">
+                    <h2 id="diary-form-context-heading">記録の基本情報</h2>
+                    <p>日付と、その日の気分を選びます。</p>
+                </div>
+                <div class="diary-form__row">
+                    <div class="diary-form__field"
+                         th:with="dateHasError=${#fields.hasErrors('diaryDate')},
+                                  showDateInput=${dateEditable == true or dateHasError}">
+                        <label class="diary-form__label" for="diaryDate" th:if="${showDateInput}">
+                            日付 <span class="diary-form__requirement diary-form__requirement--required">必須</span>
+                        </label>
+                        <span class="diary-form__label" th:unless="${showDateInput}">
+                            日付 <span class="diary-form__requirement diary-form__requirement--required">必須</span>
+                        </span>
+                        <time class="diary-form__date" th:if="${!showDateInput}" th:datetime="*{diaryDate}"
+                              th:text="${#temporals.format(diaryForm.diaryDate, 'yyyy年M月d日')}"></time>
+                        <input th:if="${!showDateInput}" type="hidden" th:field="*{diaryDate}">
+                        <input th:if="${showDateInput}" type="date" th:field="*{diaryDate}"
+                               th:max="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}"
+                               aria-describedby="diaryDate-help"
+                               th:attr="aria-invalid=${dateHasError}" required>
+                        <span class="diary-form__help" id="diaryDate-help" th:if="${showDateInput}">今日以前の日付を選んでください。</span>
+                    </div>
+                    <div class="diary-form__field">
+                        <label for="currentMood">気分 <span class="diary-form__requirement diary-form__requirement--required">必須</span></label>
+                        <select id="currentMood" th:field="*{currentMood}" required>
+                            <option value="">選択してください</option>
+                            <option value="GOOD">良い</option>
+                            <option value="NORMAL">普通</option>
+                            <option value="BAD">悪い</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="diary-form__section" aria-labelledby="diary-form-entry-heading">
+                <div class="diary-form__section-heading">
+                    <h2 id="diary-form-entry-heading">日記の本文</h2>
+                    <p>印象に残ったことや、そのときの気持ちを自由に書けます。</p>
+                </div>
+                <div class="diary-form__field">
+                    <label for="title">タイトル <span class="diary-form__requirement">任意</span></label>
+                    <input type="text" id="title" th:field="*{title}" maxlength="255">
+                </div>
+                <div class="diary-form__field">
+                    <label for="content">本文 <span class="diary-form__requirement diary-form__requirement--required">必須</span></label>
+                    <textarea id="content" th:field="*{content}" rows="8" required></textarea>
+                </div>
+            </section>
+
+            <section class="diary-form__section" aria-labelledby="diary-form-reflection-heading">
+                <div class="diary-form__section-heading">
+                    <h2 id="diary-form-reflection-heading">明日につなげるメモ</h2>
+                    <p>良かったことや、明日に残しておきたいことを記録できます。</p>
+                </div>
+                <div class="diary-form__row">
+                    <div class="diary-form__field">
+                        <label for="goodThings">良かったこと <span class="diary-form__requirement">任意</span></label>
+                        <textarea id="goodThings" th:field="*{goodThings}" rows="3"></textarea>
+                    </div>
+                    <div class="diary-form__field">
+                        <label for="tomorrowNote">明日へのメモ <span class="diary-form__requirement">任意</span></label>
+                        <textarea id="tomorrowNote" th:field="*{tomorrowNote}" rows="3"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <div class="diary-form__actions">
+                <button type="submit">保存する</button>
+                <a class="diary-back-button" th:href="@{/diary}">一覧に戻る</a>
+            </div>
+        </form>
+    </main>
+    <div th:replace="~{layout :: footer}"></div>
+</body>
+
+</html>

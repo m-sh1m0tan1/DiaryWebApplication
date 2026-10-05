@@ -6,12 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${title}"></title>
     <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/diary.css}">
 </head>
 
 <body>
     <header th:fragment="header" class="site-header">
         <div class="site-header__inner">
-            <p class="site-brand">Weekly Diary</p>
+            <a class="site-brand" th:href="@{/diary}">Weekly Diary</a>
+            <form class="site-logout-form" th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+                <button class="site-logout-button" type="submit">ログアウト</button>
+            </form>
         </div>
     </header>
 

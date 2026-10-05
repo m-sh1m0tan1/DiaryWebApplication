@@ -5,6 +5,7 @@ import com.example.diarywebapplication.mapper.DiaryMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -19,12 +20,16 @@ public class DiaryRepository {
         return diaryMapper.getDiariesByUserId(userId);
     }
 
+    public List<Diary> getThisWeekDiariesByUserId(Long userId, LocalDate startDate, LocalDate endDate) {
+        return diaryMapper.getThisWeekDiariesByUserId(userId, startDate, endDate);
+    }
+
     public Diary getDiaryById(Long diaryId) {
         return diaryMapper.getDiaryById(diaryId);
     }
 
-    public void insertDiary(Diary diary) {
-        diaryMapper.insertDiary(diary);
+    public int insertDiary(Diary diary) {
+        return diaryMapper.insertDiary(diary);
     }
 
     @Transactional
@@ -35,14 +40,4 @@ public class DiaryRepository {
         }
         return diaryMapper.getDiaryById(diary.getId());
     }
-
-    @Transactional
-    public Diary completeDiary(Diary diary) {
-        int sqlResult =  diaryMapper.completeDiary(diary);
-        if (sqlResult < 1) {
-            return null;
-        }
-        return diaryMapper.getDiaryById(diary.getId());
-    }
-
 }
